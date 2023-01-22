@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<Authors>Thomas James</Authors>
+	<Company>TPJ</Company>
+	<Description>
+		Simple email library that can send html and attachments
+	</Description>
+	<PackageTags>Email, SMTP</PackageTags>
+	<PackageReleaseNotes>2023 update! V4.0.0 now runs on .NET 7</PackageReleaseNotes>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<Version>4.0.0</Version>
+	<PackageId>TPJ.Email</PackageId>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+	<RepositoryUrl>https://github.com/TPJ11/TPJ.Email</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+		<None Include="..\README.md" Pack="true" PackagePath="\"/>
+		<None Include="..\LICENSE.txt" Pack="true" PackagePath="\"/>
+	</ItemGroup>
+
+</Project>
