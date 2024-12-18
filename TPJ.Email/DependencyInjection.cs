@@ -7,9 +7,7 @@ public static class DependencyInjection
 {
     public static void AddTPJEmail(this IServiceCollection services)
     {
-        if (services is null)
-            throw new ArgumentNullException(nameof(services));
-
+        services.TryAddSingleton<IEmailSettings, EmailSettings>();
         services.TryAddSingleton<IEmailer, Emailer>();
     }
 }

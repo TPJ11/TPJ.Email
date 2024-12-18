@@ -102,11 +102,11 @@ public interface IEmailer
 
 public class Emailer : IEmailer
 {
-    private readonly EmailSettings _emailSettings;
+    private readonly IEmailSettings _emailSettings;
     private readonly SmtpClient _smtpClient;
     private List<MemoryStream> _streamsToClose = new();
 
-    public Emailer(EmailSettings emailSettings)
+    public Emailer(IEmailSettings emailSettings)
     {
         _emailSettings = emailSettings;
 
@@ -115,27 +115,6 @@ public class Emailer : IEmailer
             EnableSsl = _emailSettings.EnableSSL,
             Port = _emailSettings.Port ?? 25,
         };
-
-        if (!string.IsNullOrWhiteSpace(_emailSettings.SmtpUser)
-            && !string.IsNullOrWhiteSpace(_emailSettings.SmtpPassword))
-        {
-            _smtpClient.UseDefaultCredentials = false;
-            _smtpClient.Credentials = new System.Net.NetworkCredential(_emailSettings.SmtpUser, _emailSettings.SmtpPassword);
-            _smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-        }
-    }
-
-    public Emailer(IConfiguration configuation)
-    {
-        _emailSettings = new EmailSettings(configuation);
-
-        _smtpClient = new SmtpClient(_emailSettings.SmtpClient)
-        {
-            EnableSsl = _emailSettings.EnableSSL
-        };
-
-        if (_emailSettings.Port.HasValue)
-            _smtpClient.Port = _emailSettings.Port.Value;
 
         if (!string.IsNullOrWhiteSpace(_emailSettings.SmtpUser)
             && !string.IsNullOrWhiteSpace(_emailSettings.SmtpPassword))

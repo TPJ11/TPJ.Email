@@ -2,7 +2,18 @@
 
 namespace TPJ.Email;
 
-public class EmailSettings
+public interface IEmailSettings
+{
+    string SmtpClient { get; set; }
+    string? SmtpUser { get; set; }
+    string? SmtpPassword { get; set; }
+    string From { get; set; }
+    string? FromDisplayName { get; set; }
+    int? Port { get; set; }
+    bool EnableSSL { get; set; }
+}
+
+public class EmailSettings : IEmailSettings
 {
     public string SmtpClient { get; set; }
     public string? SmtpUser { get; set; }
@@ -14,19 +25,6 @@ public class EmailSettings
 
     public EmailSettings()
     {
-    }
-
-    public EmailSettings(string smtpClient, string emailFrom,
-        bool enableSSL, string? smtpUser = null, string? smtpPassword = null, 
-        int? port = null, string? fromDisplayName = null)
-    {
-        SmtpClient = smtpClient;
-        From = emailFrom;
-        EnableSSL = enableSSL;
-        SmtpUser = smtpUser;
-        SmtpPassword = smtpPassword;
-        Port = port;
-        FromDisplayName = fromDisplayName;
     }
 
     public EmailSettings(IConfiguration configuration)
