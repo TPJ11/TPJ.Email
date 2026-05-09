@@ -1,279 +1,150 @@
-﻿using Microsoft.Extensions.Configuration;
-using System.Net.Mail;
-using System.Net.Mime;
-
-namespace TPJ.Email;
+﻿namespace TPJ.Email;
 
 public interface IEmailer
 {
     /// <summary>
-    /// Send the given message to the given person
+    /// Sends a single email.
     /// </summary>
-    /// <param name="to">Who to send the e-mail to (e-mail address)</param>
-    /// <param name="from">Who is sending the e-mail (e-mail address)</param>
-    /// <param name="subject">Subject of the e-mail</param>
-    /// <param name="message">Content of the e-mail</param>
-    /// <param name="isHtml">If the content is HTML</param>
-    /// <param name="from">Who the e-mail is from</param>
-    /// <param name="fromDisplayName">Name shown on the email instead of the email address</param>
-    /// <param name="cc">List of e-mails to CC in on the e-mail</param>
-    /// <param name="bcc">List of e-mails to BCC in on the e-mail</param>
-    void Send(string to, string subject, string message, bool isHtml,
-        string? from = null, string? fromDisplayName = null, IEnumerable<string>? cc = null, IEnumerable<string>? bcc = null);
+    /// <param name="emailDetails">Email Details</param>
+    /// <param name="cancellationToken">Cancellation Token</param>
+    Task SendAsync(CreateEmailSingle emailDetails, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Send the given message to the given list of people
+    /// Sends a batch of emails.
     /// </summary>
-    /// <param name="to">Who to send the e-mail to (e-mail address)</param>
-    /// <param name="from">Who is sending the e-mail (e-mail address)</param>
-    /// <param name="subject">Subject of the e-mail</param>
-    /// <param name="message">Content of the e-mail</param>
-    /// <param name="isHtml">If the content is HTML</param>
-    /// <param name="from">Who the e-mail is from</param>
-    /// <param name="fromDisplayName">Name shown on the email instead of the email address</param>
-    /// <param name="cc">List of e-mails to CC in on the e-mail</param>
-    /// <param name="bcc">List of e-mails to BCC in on the e-mail</param>
-    void Send(IEnumerable<string> to, string subject, string message, bool isHtml,
-        string? from = null, string? fromDisplayName = null, IEnumerable<string>? cc = null, IEnumerable<string>? bcc = null);
-
-    /// <summary>
-    /// Send the given message to the given list of people
-    /// </summary>
-    /// <param name="to">Who to send the e-mail to (e-mail address)</param>
-    /// <param name="from">Who is sending the e-mail (e-mail address)</param>
-    /// <param name="subject">Subject of the e-mail</param>
-    /// <param name="message">Content of the e-mail</param>
-    /// <param name="isHtml">If the content is HTML</param>
-    /// <param name="attachment">Attachment to send with the e-mail</param>
-    /// <param name="from">Who the e-mail is from</param>
-    /// <param name="cc">List of e-mails to CC in on the e-mail</param>
-    /// <param name="bcc">List of e-mails to BCC in on the e-mail</param>
-    void Send(IEnumerable<string> to, string subject, string message, bool isHtml, FileAttachment attachment,
-        string? from = null, string? fromDisplayName = null, IEnumerable<string>? cc = null, IEnumerable<string>? bcc = null);
-
-    /// <summary>
-    /// Send the given message to the given list of people
-    /// </summary>
-    /// <param name="to">Who to send the e-mail to (e-mail address)</param>
-    /// <param name="from">Who is sending the e-mail (e-mail address)</param>
-    /// <param name="subject">Subject of the e-mail</param>
-    /// <param name="message">Content of the e-mail</param>
-    /// <param name="isHtml">If the content is HTML</param>
-    /// <param name="attachment">Attachment to send with the e-mail</param>
-    /// <param name="from">Who the e-mail is from</param>
-    /// <param name="fromDisplayName">Name shown on the email instead of the email address</param>
-    /// <param name="cc">List of e-mails to CC in on the e-mail</param>
-    /// <param name="bcc">List of e-mails to BCC in on the e-mail</param>
-    void Send(string to, string subject, string message, bool isHtml, FileAttachment attachment,
-        string? from = null, string? fromDisplayName = null, IEnumerable<string>? cc = null, IEnumerable<string>? bcc = null);
-
-    /// <summary>
-    /// Send the given message to the given list of people
-    /// </summary>
-    /// <param name="to">Who to send the e-mail to (e-mail address)</param>
-    /// <param name="from">Who is sending the e-mail (e-mail address)</param>
-    /// <param name="subject">Subject of the e-mail</param>
-    /// <param name="message">Content of the e-mail</param>
-    /// <param name="isHtml">If the content is HTML</param>
-    /// <param name="attachments">Attachments to send with the e-mail</param>
-    /// <param name="from">Who the e-mail is from</param>
-    /// <param name="fromDisplayName">Name shown on the email instead of the email address</param>
-    /// <param name="cc">List of e-mails to CC in on the e-mail</param>
-    /// <param name="bcc">List of e-mails to BCC in on the e-mail</param>
-    void Send(IEnumerable<string> to, string subject, string message, bool isHtml, IEnumerable<FileAttachment> attachments,
-        string? from = null, string? fromDisplayName = null, IEnumerable<string>? cc = null, IEnumerable<string>? bcc = null);
-
-    /// <summary>
-    /// Send the given message to the given list of people
-    /// </summary>
-    /// <param name="to">Who to send the e-mail to (e-mail address)</param>
-    /// <param name="from">Who is sending the e-mail (e-mail address)</param>
-    /// <param name="subject">Subject of the e-mail</param>
-    /// <param name="message">Content of the e-mail</param>
-    /// <param name="isHtml">If the content is HTML</param>
-    /// <param name="attachments">Attachments to send with the e-mail</param>
-    /// <param name="from">Who the e-mail is from</param>
-    /// <param name="fromDisplayName">Name shown on the email instead of the email address</param>
-    /// <param name="cc">List of e-mails to CC in on the e-mail</param>
-    /// <param name="bcc">List of e-mails to BCC in on the e-mail</param>
-    void Send(string to, string subject, string message, bool isHtml, IEnumerable<FileAttachment> attachments,
-        string? from = null, string? fromDisplayName = null, IEnumerable<string>? cc = null, IEnumerable<string>? bcc = null);
+    /// <param name="emailDetails">Email Details</param>
+    /// <param name="cancellationToken">Cancellation Token</param>
+    Task SendBatchAsync(CreateEmailBatch emailDetails, CancellationToken cancellationToken = default);
 }
 
-public class Emailer : IEmailer
+// <inheritdoc />
+public class Emailer(IEmailSettings _emailSettings) : IEmailer
 {
-    private readonly IEmailSettings _emailSettings;
-    private readonly SmtpClient _smtpClient;
-    private List<MemoryStream> _streamsToClose = new();
+    public async Task SendAsync(CreateEmailSingle emailDetails, CancellationToken cancellationToken = default) =>
+        await SendBatchAsync(emailDetails.ToBatch(), cancellationToken).ConfigureAwait(false);
 
-    public Emailer(IEmailSettings emailSettings)
+    public async Task SendBatchAsync(CreateEmailBatch emailDetails, CancellationToken cancellationToken = default)
     {
-        _emailSettings = emailSettings;
+        UpdateAttachmentDetails(emailDetails);
+        UpdateFromAddress(emailDetails);
+        ValidateEmailDetails(emailDetails);
 
-        _smtpClient = new SmtpClient(_emailSettings.SmtpClient)
-        {
-            EnableSsl = _emailSettings.EnableSSL,
-            Port = _emailSettings.Port ?? 25,
-        };
+        await SendSmtpAsync(emailDetails).ConfigureAwait(false);
 
-        if (!string.IsNullOrWhiteSpace(_emailSettings.SmtpUser)
-            && !string.IsNullOrWhiteSpace(_emailSettings.SmtpPassword))
-        {
-            _smtpClient.UseDefaultCredentials = false;
-            _smtpClient.Credentials = new System.Net.NetworkCredential(_emailSettings.SmtpUser, _emailSettings.SmtpPassword);
-            _smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-        }
+        Debug.WriteLine(_emailSettings.Debug, string.Empty);
     }
 
-    public void Send(string to, string subject, string message, bool isHtml,
-        string? from = null, string? fromDisplayName = null, IEnumerable<string>? cc = null, IEnumerable<string>? bcc = null) =>
-        SendEmail(message, subject, new List<string>() { to }, isHtml, from, fromDisplayName, null, cc, bcc);
-
-    public void Send(IEnumerable<string> to, string subject, string message, bool isHtml,
-        string? from = null, string? fromDisplayName = null, IEnumerable<string>? cc = null, IEnumerable<string>? bcc = null) => 
-        SendEmail(message, subject, to, isHtml, from, fromDisplayName, null, cc, bcc);
-
-    public void Send(IEnumerable<string> to, string subject, string message, bool isHtml, FileAttachment attachment, 
-        string? from = null, string? fromDisplayName = null, IEnumerable<string>? cc = null, IEnumerable<string>? bcc = null) =>
-        SendEmail(message, subject, to, isHtml, from, fromDisplayName, new List<FileAttachment> { attachment }, cc, bcc);
-
-    public void Send(string to, string subject, string message, bool isHtml, FileAttachment attachment, 
-        string? from = null, string? fromDisplayName = null, IEnumerable<string>? cc = null, IEnumerable<string>? bcc = null) => 
-        SendEmail(message, subject, new List<string>() { to }, isHtml, from, fromDisplayName, new List<FileAttachment> { attachment }, cc, bcc);   
-
-    public void Send(IEnumerable<string> to, string subject, string message, bool isHtml, IEnumerable<FileAttachment> attachments,
-        string? from = null, string? fromDisplayName = null, IEnumerable<string>? cc = null, IEnumerable<string>? bcc = null) => 
-        SendEmail(message, subject, to, isHtml, from, fromDisplayName, attachments, cc, bcc);
-
-    public void Send(string to, string subject, string message, bool isHtml, IEnumerable<FileAttachment> attachments,
-        string? from = null, string? fromDisplayName = null, IEnumerable<string>? cc = null, IEnumerable<string>? bcc = null) => 
-        SendEmail(message, subject, new List<string>() { to }, isHtml, from, fromDisplayName, attachments, cc, bcc);
-
-    /// <summary>
-    /// Send an e-mail using the given message body and subject. 
-    /// Sending the e-mails to each person in the e-mail list
-    /// </summary>
-    /// <param name="messageBody">E-mail Message body</param>
-    /// <param name="subject">E-mail Subject</param>
-    /// <param name="emailToList">E-mail To</param>
-    /// <param name="from">E-mail From</param>
-    /// <param name="isHtml">is the e-mail HTML</param>
-    private void SendEmail(string messageBody, string subject, IEnumerable<string> emailToList,
-        bool isHtml, string? from = null, string? fromDisplayName = null, IEnumerable<FileAttachment>? attachments = null,
-        IEnumerable<string>? cc = null, IEnumerable<string>? bcc = null)
+    private void UpdateFromAddress(CreateEmailBatch emailDetails)
     {
-        if (emailToList is null)
+        if (emailDetails.From is not null || string.IsNullOrWhiteSpace(_emailSettings.From))
             return;
 
-        try
+        emailDetails.From = new CreateEmailAudience
         {
-            from = string.IsNullOrWhiteSpace(from) ? _emailSettings.From : from;
-            fromDisplayName = string.IsNullOrWhiteSpace(fromDisplayName) ? _emailSettings.FromDisplayName : fromDisplayName;
-
-            using var message = new MailMessage()
-            {
-                Subject = subject,
-                From = new MailAddress(from, fromDisplayName),
-                Body = messageBody,
-                IsBodyHtml = isHtml
-            };
-
-            // Add each e-mail to send to
-            foreach (string email in emailToList)
-                message.To.Add(email);
-
-            if (cc is not null)
-            {
-                foreach (var email in cc)
-                    message.CC.Add(email);
-            }
-
-            if (bcc is not null)
-            {
-                foreach (var email in bcc)
-                    message.Bcc.Add(email);
-            }
-
-            if (attachments is not null)
-            {
-                foreach (var attachment in attachments)
-                    message.Attachments.Add(CreateAttachment(attachment));
-            }
-
-            // Attempt to send the email 3 times then throw the error
-            var hasSent = false;
-            var sendCount = 0;
-            while (!hasSent)
-            {
-                try
-                {
-                    _smtpClient.Send(message);
-                    hasSent = true;
-                }
-                catch (Exception)
-                {
-                    sendCount++;
-                    if (sendCount >= 3)
-                        throw;
-                    else
-                        Thread.Sleep(100);
-                }
-            }
-        }
-        finally
-        {
-            CloseStreams();
-        }
-    }
-    
-    /// <summary>
-    /// Creates an attachment for the e-mail
-    /// </summary>
-    /// <param name="details">Attachment details</param>
-    /// <returns>Attachment</returns>
-    private Attachment CreateAttachment(FileAttachment details)
-    {
-        Attachment attachment;
-
-        if (string.IsNullOrWhiteSpace(details.FilePath))
-        {
-            var stream = new MemoryStream(details.FileBytes);
-
-            stream.Seek(0, SeekOrigin.Begin);
-
-            attachment = new Attachment(stream, details.FileName, details.MimeType);
-            // Add time stamp information for the file.
-            ContentDisposition disposition = attachment.ContentDisposition;
-            disposition.CreationDate = DateTime.Now;
-            disposition.ModificationDate = DateTime.Now;
-            disposition.ReadDate = DateTime.Now;
-
-            _streamsToClose.Add(stream);
-        }
-        else
-        {
-            attachment = new Attachment(details.FilePath, MediaTypeNames.Application.Octet);
-            // Add time stamp information for the file.
-            ContentDisposition disposition = attachment.ContentDisposition;
-            disposition.CreationDate = File.GetCreationTime(details.FilePath);
-            disposition.ModificationDate = File.GetLastWriteTime(details.FilePath);
-            disposition.ReadDate = File.GetLastAccessTime(details.FilePath);
-        }
-        
-        return attachment;
+            Email = _emailSettings.From!
+        };
     }
 
-    /// <summary>
-    /// Closes all streams and clears the stream list
-    /// </summary>
-    private void CloseStreams()
+    private void ValidateEmailDetails(CreateEmailBatch emailDetails)
     {
-        foreach (var stream in _streamsToClose)
+        if (emailDetails.Attachments is not null)
         {
-            stream.Close();
-            stream.Dispose();
+            foreach (var attachment in emailDetails.Attachments)
+            {
+                if (attachment.FilePath is null && attachment.FileBytes is null)
+                    throw new InvalidOperationException("Attachment must have either FileBytes or FileLocation");
+
+                if (attachment.FilePath is not null && !File.Exists(attachment.FilePath))
+                    throw new FileNotFoundException("Attachment file not found", attachment.FilePath);
+
+                if (attachment.ContentType is null)
+                    throw new InvalidOperationException("Attachment must have ContentType");
+
+                if (attachment.FileName is null)
+                    throw new InvalidOperationException("Attachment must have FileName");
+            }
         }
 
-        _streamsToClose.Clear();
+        if ((emailDetails.From is null || !SmtpHelper.IsValidEmail(emailDetails.From.Email))
+            && _emailSettings.SmtpClient is not null)
+            throw new InvalidOperationException("From email required");
+
+        if (emailDetails.Emails is null || emailDetails.Emails.Count() == 0)
+            throw new InvalidOperationException("One or more email is required");
+
+        var invalidEmailAddresses = GetInvalidEmailAddresses(emailDetails);
+        if (invalidEmailAddresses.Count > 0)
+            throw new ArgumentException($"Invalid email addresses: {string.Join(", ", invalidEmailAddresses)}");
+    }
+
+    private static List<string> GetInvalidEmailAddresses(CreateEmailBatch emailDetails)
+    {
+        return emailDetails.Emails
+            .SelectMany(email => email.To
+                .Concat(email.CC ?? [])
+                .Concat(email.BCC ?? []))
+            .Where(audience => !SmtpHelper.IsValidEmail(audience.Email))
+            .Select(audience => audience.Email)
+            .ToList();
+    }
+
+    private static void UpdateAttachmentDetails(CreateEmailBatch emailDetails)
+    {
+        if (emailDetails.Attachments is null)
+            return;
+
+        foreach (var attachment in emailDetails.Attachments)
+        {
+            SetAttachmentContentType(attachment);
+            SetAttachmentFileName(attachment);
+        }
+    }
+
+    private static void SetAttachmentFileName(CreateEmailAttachment attachment)
+    {
+        if (attachment.FileName is not null)
+            return;
+
+        if (attachment.FilePath is not null)
+            attachment.FileName = Path.GetFileName(attachment.FilePath);
+    }
+
+    private static void SetAttachmentContentType(CreateEmailAttachment attachment)
+    {
+        if (attachment.ContentType is not null)
+            return;
+
+        if (attachment.FileName is not null)
+            attachment.ContentType = attachment.FileName.ToContentType();
+
+        if (attachment.ContentType is null && attachment.FilePath is not null)
+            attachment.ContentType = attachment.FilePath.ToContentType();
+    }
+
+    private async Task SendSmtpAsync(CreateEmailBatch emailDetails)
+    {
+        Debug.WriteLine(_emailSettings.Debug, "Sending via SMTP");
+        using var smtpClient = SmtpHelper.CreateClient(_emailSettings);
+
+        foreach (var email in emailDetails.Emails)
+        {
+            Debug.WriteLine(_emailSettings.Debug, $"Email sending to: {string.Join(",", email.To.Select(x => x.Email))}");
+            var (mailMessage, streams) = SmtpHelper.CreateMessage(emailDetails, email);
+
+            try
+            {
+                await smtpClient.SendMailAsync(mailMessage).ConfigureAwait(false);
+                Debug.WriteLine(_emailSettings.Debug, "SMTP sent successfully");
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(_emailSettings.Debug, $"SMTP exception - {e.Message}");
+                throw;
+            }
+            finally
+            {
+                SmtpHelper.CloseStreams(streams);
+            }
+        }
     }
 }

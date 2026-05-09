@@ -11,17 +11,19 @@ public interface IEmailSettings
     string? FromDisplayName { get; set; }
     int? Port { get; set; }
     bool EnableSSL { get; set; }
+    bool Debug { get; set; }
 }
 
 public class EmailSettings : IEmailSettings
 {
-    public string SmtpClient { get; set; }
+    public required string SmtpClient { get; set; }
     public string? SmtpUser { get; set; }
     public string? SmtpPassword { get; set; }
-    public string From { get; set; }
+    public required string From { get; set; }
     public string? FromDisplayName { get; set; }
     public int? Port { get; set; }
     public bool EnableSSL { get; set; }
+    public bool Debug { get; set; }
 
     public EmailSettings()
     {
@@ -29,12 +31,18 @@ public class EmailSettings : IEmailSettings
 
     public EmailSettings(IConfiguration configuration)
     {
-        var smtpClient = configuration["TPJ:Email:SmtpClient"];
+        if (bool.TryParse(configuration["TPJ:Email:Debug"], out var debug))
+            Debug = debug;
 
-        if (string.IsNullOrWhiteSpace(smtpClient))
-            throw new ArgumentException("SMTP client missing");
+        if (configuration["TPJ:Email:SmtpClient"] is not null)        
+            SmtpClient = configuration["TPJ:Email:SmtpClient"]!;        
+        else
+        {
+            var azureKeyVaultName = configuration["TPJ:Email:AzureKeyVault:SmtpClient"]!;
 
-        SmtpClient = smtpClient;
+            if (!string.IsNullOrWhiteSpace(azureKeyVaultName))
+                SmtpClient = TPJ.Encrypt.AzureKeyVault.GetSecretValue(configuration, azureKeyVaultName);
+        }
 
         var from = configuration["TPJ:Email:From"];
 
@@ -45,7 +53,22 @@ public class EmailSettings : IEmailSettings
         FromDisplayName = configuration["TPJ:Email:FromDisplayName"];
 
         SmtpUser = configuration["TPJ:Email:SmtpUser"];
+        if (string.IsNullOrWhiteSpace(SmtpUser))
+        {
+            var azureKeyVaultName = configuration["TPJ:Email:AzureKeyVault:SmtpUser"]!;
+
+            if (!string.IsNullOrWhiteSpace(azureKeyVaultName))
+                SmtpUser = TPJ.Encrypt.AzureKeyVault.GetSecretValue(configuration, azureKeyVaultName);
+        }
+
         SmtpPassword = configuration["TPJ:Email:SmtpPassword"];
+        if (string.IsNullOrWhiteSpace(SmtpPassword))
+        {
+            var azureKeyVaultName = configuration["TPJ:Email:AzureKeyVault:SmtpPassword"]!;
+
+            if (!string.IsNullOrWhiteSpace(azureKeyVaultName))
+                SmtpPassword = TPJ.Encrypt.AzureKeyVault.GetSecretValue(configuration, azureKeyVaultName);
+        }
 
         if (bool.TryParse(configuration["TPJ:Email:EnableSSL"], out var enableSSL))
             EnableSSL = enableSSL;

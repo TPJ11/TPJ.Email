@@ -1,30 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-	<Authors>Thomas James</Authors>
-	<Company>TPJ</Company>
-	<Description>
-		Simple email library that can send html and attachments
-	</Description>
-	<PackageTags>Email, SMTP</PackageTags>
-	<PackageReleaseNotes>V9.0.0 now runs on .NET 9</PackageReleaseNotes>
-	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-	<Version>9.0.0</Version>
-	<PackageId>TPJ.Email</PackageId>
-	<PackageReadmeFile>README.md</PackageReadmeFile>
-	<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-	<RepositoryUrl>https://github.com/TPJ11/TPJ.Email</RepositoryUrl>
-	<RepositoryType>git</RepositoryType>
-  </PropertyGroup>
-	
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Authors>Thomas James</Authors>
+		<Company>TPJ</Company>
+		<Description>
+			Simple email library that can send html and attachments
+		</Description>
+		<PackageTags>Email, SMTP</PackageTags>
+		<PackageReleaseNotes>V10.0.0 now runs on .NET 10 with significant changes to how emails are sent see README.md for details</PackageReleaseNotes>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Version>10.0.0</Version>
+		<PackageId>TPJ.Email</PackageId>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<RepositoryUrl>https://github.com/TPJ11/TPJ.Email</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+	</PropertyGroup>
+
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
 		<None Include="..\README.md" Pack="true" PackagePath="\" />
 		<None Include="..\LICENSE.txt" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.7" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
+		<PackageReference Include="TPJ.Encrypt" Version="10.0.0" />
 	</ItemGroup>
 
 </Project>
